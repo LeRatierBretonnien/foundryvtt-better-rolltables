@@ -54,7 +54,7 @@ class BetterRolltableHooks {
         // if (game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.ENABLE_OLD_BEHAVIOR)) {
         //   Hooks.on("renderRollTableConfig", BetterRT.enhanceRollTableView);
         // }
-        Hooks.on("renderRollTableConfig", BetterTables.checkRenderDefaultRollTableConfig);
+        Hooks.on("renderRollTableSheet", BetterTables.checkRenderDefaultRollTableConfig);
         Hooks.on("renderChatMessage", BetterTables.handleChatMessageButtons);
 
         // TODO OTHER MODULES DO THIS
@@ -198,7 +198,7 @@ class BetterRolltableHooks {
             packageName: CONSTANTS.MODULE_ID,
             sheetClasses: [
                 {
-                    name: "RolltableConfig", // this _must_ be the class name of the `Application` you want it to apply to
+                    name: "RollTableSheet", // this _must_ be the class name of the `Application` you want it to apply to
                     fieldConfigs: [
                         {
                             selector: `.tags .tagger input`,

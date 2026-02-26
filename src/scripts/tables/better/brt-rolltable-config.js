@@ -10,7 +10,7 @@ import { BRTUtils } from "../../core/utils.js";
  * @param {RollTable} table                 The RollTable document being configured
  * @param {DocumentSheetOptions} [options]  Additional application configuration options
  */
-export class BetterRollTableBetterConfig extends RollTableConfig {
+export class BetterRollTableBetterConfig extends foundry.applications.sheets.RollTableSheet {
     /** @inheritdoc */
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {

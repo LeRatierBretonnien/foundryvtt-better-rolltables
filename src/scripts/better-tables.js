@@ -728,64 +728,19 @@ export class BetterTables {
     }
 
     static async checkRenderDefaultRollTableConfig(rollTableConfig, html, rollTable) {
-        if (rollTableConfig.object.sheet.template !== "templates/sheets/roll-table-config.html") {
-            /*
-      if (rollTableConfig.isEditable) {
-        let atLeastOneIsUpdated = false;
-        const resultsToUpdate = await Promise.all(
-          rollTableConfig.object.results.map(async (result) => {
-            const obj = await BRTBetterHelpers.updateTableResult(result);
-            if (
-              obj?.result &&
-              obj.isUpdate &&
-              !isEmptyObject(foundry.utils.getProperty(obj.result, `flags.${CONSTANTS.MODULE_ID}`))
-            ) {
-              let resultToUpdate = result.toObject(false);
-              if (!resultToUpdate.flags) {
-                resultToUpdate.flags = {};
-              }
-              if (!resultToUpdate.flags[CONSTANTS.MODULE_ID]) {
-                resultToUpdate.flags[CONSTANTS.MODULE_ID] = {};
-              }
-              foundry.utils.mergeObject(
-                resultToUpdate.flags[CONSTANTS.MODULE_ID],
-                foundry.utils.getProperty(obj.result, `flags.${CONSTANTS.MODULE_ID}`)
-              );
-              atLeastOneIsUpdated = true;
-              return resultToUpdate;
-            }
-          })
-        );
-        if (atLeastOneIsUpdated) {
-          //Logger.info(`Try to Update the rolltable`, false, rollTableConfig.object);
-          // This little trick seem to refresh the config
-          if(isEmptyObject(API.cacheBrtRender)){
-            API.cacheBrtRender = {};
-          }
-          if(!API.cacheBrtRender[rollTableConfig.object.id]) {
-            Logger.info(`Update the rolltable`, false, rollTableConfig.object);
-            await rollTableConfig.object.updateEmbeddedDocuments("TableResult", resultsToUpdate);
-            API.cacheBrtRender[rollTableConfig.object.id] = true;
-          }
+        // In V13 (AppV2), the document is accessed via .document; fall back to .object for AppV1.
+        const doc = rollTableConfig.document ?? rollTableConfig.object;
+        if (!doc) return;
+
+        // If this is one of our BRT custom sheets (a subclass), there is nothing to do.
+        if (rollTableConfig.constructor !== foundry.applications.sheets.RollTableSheet) {
+            return;
         }
-      }
-      */
-            // Force a update
-            // if(rollTableConfig.rendered) {
-            //     Logger.log(`checkRenderDefaultRollTableConfig | ${rollTableConfig.object.name}`);
-            //     await rollTableConfig.object.update(rollTableConfig.object.toObject(), {
-            //         diff: false,
-            //         pack: null,
-            //         parent: null,
-            //         recursive: false,
-            //     });
-            // }
-        } else {
-            Logger.debug(`Set table type to null for default sheet rolltable config`);
-            // If the flas is not null
-            if (!rollTableConfig.object.getFlag(CONSTANTS.MODULE_ID, CONSTANTS.FLAGS.TABLE_TYPE_KEY)) {
-                await rollTableConfig.object.setFlag(CONSTANTS.MODULE_ID, CONSTANTS.FLAGS.TABLE_TYPE_KEY, null);
-            }
+
+        // The default Foundry sheet is being rendered: ensure the BRT type flag is cleared.
+        Logger.debug(`Set table type to null for default sheet rolltable config`);
+        if (!doc.getFlag(CONSTANTS.MODULE_ID, CONSTANTS.FLAGS.TABLE_TYPE_KEY)) {
+            await doc.setFlag(CONSTANTS.MODULE_ID, CONSTANTS.FLAGS.TABLE_TYPE_KEY, null);
         }
     }
 }
